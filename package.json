@@ -1,0 +1,30 @@
+{
+  "name": "coordina",
+  "version": "1.0.0",
+  "description": "Cross-Organization Decision Intelligence Agent for Slack — built for the Slack Agent Builder Challenge (Slack Agent for Good track).",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "migrate": "node sql/migrate.js",
+    "demo": "node sql/migrate.js --fresh && node src/demo/seed.js",
+    "dashboard": "npm run dev --prefix frontend"
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "dependencies": {
+    "@slack/bolt": "^3.19.0",
+    "axios": "^1.7.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mysql2": "^3.10.1",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  },
+  "license": "MIT"
+}
