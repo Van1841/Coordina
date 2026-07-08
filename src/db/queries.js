@@ -6,6 +6,16 @@
 // ============================================================
 import { query } from './pool.js';
 
+function parseJsonField(row, field) {
+  if (!row || row[field] == null) return row;
+  if (typeof row[field] !== 'string') return row;
+  try {
+    return { ...row, [field]: JSON.parse(row[field]) };
+  } catch {
+    return { ...row, [field]: null };
+  }
+}
+
 // ---------------------------------------------------------------
 // Organizations
 // ---------------------------------------------------------------
@@ -31,12 +41,13 @@ export async function upsertOrganization(org) {
 }
 
 export async function listOrganizations() {
-  return query('SELECT * FROM organizations ORDER BY name');
+  const rows = await query('SELECT * FROM organizations ORDER BY name');
+  return rows.map((r) => parseJsonField(r, 'metadata'));
 }
 
 export async function getOrganization(id) {
   const rows = await query('SELECT * FROM organizations WHERE id = :id', { id });
-  return rows[0] || null;
+  return rows[0] ? parseJsonField(rows[0], 'metadata') : null;
 }
 
 // ---------------------------------------------------------------
@@ -87,10 +98,10 @@ export async function createIncident(incident) {
   const result = await query(
     `INSERT INTO incidents
       (organization_id, kind, category, summary, people_affected, status,
-       source_channel, source_message_ts, raw_text)
+       source_channel, source_message_ts, raw_text, created_at)
      VALUES
       (:organizationId, :kind, :category, :summary, :peopleAffected, :status,
-       :sourceChannel, :sourceMessageTs, :rawText)`,
+       :sourceChannel, :sourceMessageTs, :rawText, NOW())`,
     {
       organizationId: incident.organizationId,
       kind: incident.kind,
@@ -122,7 +133,7 @@ export async function updateIncident(id, fields) {
 
 export async function getIncident(id) {
   const rows = await query('SELECT * FROM incidents WHERE id = :id', { id });
-  return rows[0] || null;
+  return rows[0] ? parseJsonField(rows[0], 'score_breakdown') : null;
 }
 
 export async function listIncidents({ status = null, organizationId = null, limit = 100 } = {}) {
@@ -131,7 +142,9 @@ export async function listIncidents({ status = null, organizationId = null, limi
   if (status) { sql += ' AND status = :status'; params.status = status; }
   if (organizationId) { sql += ' AND organization_id = :organizationId'; params.organizationId = organizationId; }
   sql += ' ORDER BY priority_score DESC, created_at DESC LIMIT :limit';
-  return query(sql, params);
+  // return query(sql, params);
+  const rows = await query(sql, params);
+  return rows.map((r) => parseJsonField(r, 'score_breakdown'));
 }
 
 export async function findOpenIncidentsByCategory(category, excludeId = null) {
@@ -139,7 +152,9 @@ export async function findOpenIncidentsByCategory(category, excludeId = null) {
   const params = { category };
   if (excludeId) { sql += ' AND id != :excludeId'; params.excludeId = excludeId; }
   sql += ' ORDER BY created_at DESC LIMIT 25';
-  return query(sql, params);
+  // return query(sql, params);
+  const rows = await query(sql, params);
+  return rows.map((r) => parseJsonField(r, 'score_breakdown'));
 }
 
 // ---------------------------------------------------------------

@@ -6,10 +6,10 @@
 -- move to PostgreSQL is a near copy-paste job — see README.
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS coordina
-  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- CREATE DATABASE IF NOT EXISTS coordina
+--   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-USE coordina;
+-- USE coordina;
 
 -- ------------------------------------------------------------
 -- organizations: one row per connected Slack workspace
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS organizations (
   slack_team_id VARCHAR(32)  NULL,
   latitude      DECIMAL(9,6) NULL,
   longitude     DECIMAL(9,6) NULL,
-  metadata      JSON         NULL,                  -- capacity, contact info, tags
+  metadata      TEXT         NULL,                  -- capacity, contact info, tags (JSON-encoded string — see db/queries.js)
   created_at    TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -58,11 +58,11 @@ CREATE TABLE IF NOT EXISTS incidents (
   status            VARCHAR(24)  NOT NULL DEFAULT 'open',   -- open | matched | in_progress | resolved | merged
   merged_into_id    INT          NULL,              -- set when duplicate-merged into another incident
   priority_score    DECIMAL(6,2) NULL,               -- deterministic score, see scoring/priorityEngine.js
-  score_breakdown   JSON         NULL,
+  score_breakdown   TEXT         NULL,               -- JSON-encoded string — see db/queries.js
   source_channel    VARCHAR(64)  NULL,
   source_message_ts VARCHAR(32)  NULL,
   raw_text          TEXT         NULL,
-  created_at        TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+  created_at        TIMESTAMP    NULL DEFAULT NULL,
   updated_at        TIMESTAMP    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE,
   FOREIGN KEY (merged_into_id) REFERENCES incidents(id) ON DELETE SET NULL
