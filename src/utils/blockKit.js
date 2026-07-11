@@ -150,7 +150,7 @@ export function escalationBlocks(incident, hoursOpen) {
     {
       type: 'actions',
       elements: [
-        { type: 'button', text: { type: 'plain_text', text: '👀 View in dashboard' }, url: `${process.env.DASHBOARD_ORIGIN || 'http://localhost:5173'}/incidents/${incident.id}`, action_id: 'coordina_view_dashboard' },
+        { type: 'button', text: { type: 'plain_text', text: '👀 View in dashboard' }, url: process.env.DASHBOARD_ORIGIN || 'http://localhost:5173', action_id: 'coordina_view_dashboard' },
       ],
     },
   ];
