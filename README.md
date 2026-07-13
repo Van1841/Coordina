@@ -10,6 +10,14 @@ coordinators, it recommends what should happen first. A human always makes
 the final call. Coordina never performs a life-critical action automatically.
 
 ---
+## 🔗 Quick Links
+
+🎥 Demo Video: https://youtu.be/6C4yFuIXW_s
+
+🌐 Live Dashboard: https://coordina-psi.vercel.app/
+
+💻 GitHub Repository: https://github.com/Van1841/Coordina
+
 
 ## Table of contents
 
@@ -68,6 +76,22 @@ At a glance: one Node process runs a separate `@slack/bolt` App instance (Socket
 Mode) per connected organization workspace, all sharing one service layer, one
 MySQL database, and one MCP tool registry. An Express + Socket.IO server
 exposes a REST API and a live signal stream to a React dashboard.
+
+Although the demo focuses on disaster relief, Coordina's architecture is completely domain-agnostic.
+
+The same coordination engine can be applied to:
+
+- 🚑 Disaster Relief
+- 🏥 Healthcare Networks
+- 💼 Enterprise IT Operations
+- 📞 Customer Support
+- 💰 Sales & Customer Success
+- 📦 Supply Chain
+- 🏛 Government Operations
+
+Nothing about the coordination engine changes.
+
+Only the connected Slack workspaces do.
 
 ## Folder structure
 
